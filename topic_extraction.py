@@ -7,6 +7,8 @@ Created on Sat Dec 23 12:48:20 2023
 import os
 import json
 
+from tqdm import tqdm
+
 from transformers import BertModel, BertConfig
 import torch
 from torch.autograd import grad
@@ -120,7 +122,12 @@ class BertForTopicExtraction():
         global_step = 0
         self.model.train()
         
-        for _ in range(args['num_train_epochs']):
+        all_train_loss = []
+        all_val_loss = []
+        
+        for _ in tqdm(range(args['num_train_epochs'])):
+            train_losses = []
+            train_size = 0
             for step, batch in enumerate(train_dataloader):
                 
                 if step==0:
@@ -140,7 +147,13 @@ class BertForTopicExtraction():
                     optimizer.zero_grad()
                     global_step += 1
                     
-                    logger.info("Training loss: %f", loss.item())
+                    train_losses.append(loss.data.item()*input_ids.size(0) )
+                    train_size+=input_ids.size(0)
+                    
+                    logger.info("Training loss : %f", loss.data.item())
+                    
+            train_loss = sum(train_losses)/train_size
+            all_train_loss.append(train_loss)
                 
             #>>>> perform validation at the end of each epoch .
             if args['do_valid']:
@@ -150,19 +163,22 @@ class BertForTopicExtraction():
                     losses=[]
                     valid_size=0
                     for step, batch in enumerate(valid_dataloader):
-                        batch = tuple(t.to(device) for t in batch) # multi-gpu does scattering it-self
-                        input_ids, segment_ids, input_mask, label_ids = batch
-                        loss = self.model(input_ids, input_mask, label_ids)
-                        losses.append(loss.data.item()*input_ids.size(0) )
-                        valid_size+=input_ids.size(0)
+                        if step==0:
+                            batch = tuple(t.to(device) for t in batch) # multi-gpu does scattering it-self
+                            input_ids, segment_ids, input_mask, label_ids = batch
+                            loss = self.model(input_ids, input_mask, label_ids)
+                            losses.append(loss.data.item()*input_ids.size(0))
+                            valid_size+=input_ids.size(0)
                     valid_loss=sum(losses)/valid_size
                     logger.info("validation loss: %f", valid_loss)
                     valid_losses.append(valid_loss)
                 # if valid_loss<best_valid_loss:
                 #     torch.save(model, os.path.join(args['output_dir'], "model.pt") )
                 #     best_valid_loss=valid_loss
+                all_val_loss.append(valid_loss)
                 self.model.train()
         
+        loss_info = {'training_loss': all_train_loss, 'validation_loss':all_val_loss}
             
         if args['do_valid']:
             if not os.path.exists(args['output_dir']):
@@ -174,4 +190,6 @@ class BertForTopicExtraction():
             if not os.path.exists(args['output_dir']):
                 os.mkdir(args['output_dir'])
             torch.save(self.model, os.path.join(args['output_dir'], "model.pt") )
+            
+        return loss_info
             

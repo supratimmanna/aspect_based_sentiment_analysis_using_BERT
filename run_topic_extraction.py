@@ -47,5 +47,5 @@ model = BertForTopicExtraction(args['pretrained_model_path'], model_config,
 
 
 
-model.fine_tuning(args, logger)
+linfo = model.fine_tuning(args, logger)
 

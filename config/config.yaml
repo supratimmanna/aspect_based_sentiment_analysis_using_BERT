@@ -7,7 +7,7 @@ train_batch_size: 2
 lr: 0.000003
 dropout: 0.1
 epsilon: 0.2
-num_train_epochs: 1
+num_train_epochs: 3
 
 do_valid: True
 adv_attack: False
