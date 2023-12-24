@@ -2,12 +2,12 @@ pretrained_model_path: 'bert-base-uncased'
 data_dir: 'data/ae/laptop'
 output_dir: 'save_log'
 max_seq_length: 128
-train_batch_size: 2
+train_batch_size: 8
 
 lr: 0.000003
 dropout: 0.1
 epsilon: 0.2
-num_train_epochs: 3
+num_train_epochs: 15
 
 do_valid: True
 adv_attack: False
