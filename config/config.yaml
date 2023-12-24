@@ -5,9 +5,9 @@ max_seq_length: 128
 train_batch_size: 2
 
 lr: 0.000003
-dropout: 0.0
+dropout: 0.1
 epsilon: 0.2
 num_train_epochs: 1
 
-do_valid: False
+do_valid: True
 adv_attack: False

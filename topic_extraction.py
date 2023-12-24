@@ -7,7 +7,7 @@ Created on Sat Dec 23 12:48:20 2023
 import os
 import json
 
-from transformers import BertPreTrainedModel, BertModel, BertConfig
+from transformers import BertModel, BertConfig
 import torch
 from torch.autograd import grad
 
@@ -108,15 +108,11 @@ class BertForTopicExtraction():
             logger.info("  Batch size = %d", args['train_batch_size'])
     
             valid_sampler = SequentialSampler(valid_data)
-            valid_dataloader = DataLoader(valid_data, sampler=valid_sampler, batch_size=args.train_batch_size)    
+            valid_dataloader = DataLoader(valid_data, sampler=valid_sampler, batch_size=args['train_batch_size'])    
     
             best_valid_loss=float('inf')
             valid_losses=[]
             
-        # model_config = BertConfig.from_pretrained(args['pretrained_model_path'])
-        # model = BertForTopicExtraction(args['pretrained_model_path'], model_config, num_labels = len(label_list), 
-        #                                                 dropout=args['dropout'], epsilon=args['epsilon'])
-        # self.model = self.bert_model
         self.model.to(device)
         
         optimizer = torch.optim.AdamW(self.model.parameters(), lr=args['lr'])
@@ -130,11 +126,7 @@ class BertForTopicExtraction():
                 if step==0:
                     batch = tuple(t.to(device) for t in batch)
                     input_ids, segment_ids, input_mask, label_ids = batch
-                    print(input_ids.shape)
-                    print(segment_ids.shape)
-                    print(input_mask.shape)
-                    print(label_ids.shape)
-        
+                    
         
                     # _loss, adv_loss = self.model(input_ids, segment_ids, input_mask, label_ids)
                     _loss = self.model(input_ids, input_mask, label_ids)
@@ -147,6 +139,8 @@ class BertForTopicExtraction():
                     optimizer.step()
                     optimizer.zero_grad()
                     global_step += 1
+                    
+                    logger.info("Training loss: %f", loss.item())
                 
             #>>>> perform validation at the end of each epoch .
             if args['do_valid']:
@@ -158,7 +152,7 @@ class BertForTopicExtraction():
                     for step, batch in enumerate(valid_dataloader):
                         batch = tuple(t.to(device) for t in batch) # multi-gpu does scattering it-self
                         input_ids, segment_ids, input_mask, label_ids = batch
-                        loss = self.model(input_ids, segment_ids, input_mask, label_ids)
+                        loss = self.model(input_ids, input_mask, label_ids)
                         losses.append(loss.data.item()*input_ids.size(0) )
                         valid_size+=input_ids.size(0)
                     valid_loss=sum(losses)/valid_size
@@ -169,6 +163,7 @@ class BertForTopicExtraction():
                 #     best_valid_loss=valid_loss
                 self.model.train()
         
+            
         if args['do_valid']:
             if not os.path.exists(args['output_dir']):
                 os.mkdir(args['output_dir'])
@@ -176,4 +171,7 @@ class BertForTopicExtraction():
             with open(os.path.join(args['output_dir'], "valid.json"), "w") as fw:
                 json.dump({"valid_losses": valid_losses}, fw)
         else:
+            if not os.path.exists(args['output_dir']):
+                os.mkdir(args['output_dir'])
             torch.save(self.model, os.path.join(args['output_dir'], "model.pt") )
+            
