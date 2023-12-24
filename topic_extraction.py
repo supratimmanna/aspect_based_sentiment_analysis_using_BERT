@@ -130,27 +130,27 @@ class BertForTopicExtraction():
             train_size = 0
             for step, batch in enumerate(train_dataloader):
                 
-                if step==0:
-                    batch = tuple(t.to(device) for t in batch)
-                    input_ids, segment_ids, input_mask, label_ids = batch
-                    
-        
-                    # _loss, adv_loss = self.model(input_ids, segment_ids, input_mask, label_ids)
-                    _loss = self.model(input_ids, input_mask, label_ids)
-                    loss = _loss #+ adv_loss
-                    loss.backward()
-                    
-                    # lr_this_step = args['lr'] * warmup_linear(global_step/t_total, args.warmup_proportion)
-                    # for param_group in optimizer.param_groups:
-                    #     param_group['lr'] = lr_this_step
-                    optimizer.step()
-                    optimizer.zero_grad()
-                    global_step += 1
-                    
-                    train_losses.append(loss.data.item()*input_ids.size(0) )
-                    train_size+=input_ids.size(0)
-                    
-                    logger.info("Training loss : %f", loss.data.item())
+                # if step==0:
+                batch = tuple(t.to(device) for t in batch)
+                input_ids, segment_ids, input_mask, label_ids = batch
+                
+    
+                # _loss, adv_loss = self.model(input_ids, segment_ids, input_mask, label_ids)
+                _loss = self.model(input_ids, input_mask, label_ids)
+                loss = _loss #+ adv_loss
+                loss.backward()
+                
+                # lr_this_step = args['lr'] * warmup_linear(global_step/t_total, args.warmup_proportion)
+                # for param_group in optimizer.param_groups:
+                #     param_group['lr'] = lr_this_step
+                optimizer.step()
+                optimizer.zero_grad()
+                global_step += 1
+                
+                train_losses.append(loss.data.item()*input_ids.size(0) )
+                train_size+=input_ids.size(0)
+                
+                logger.info("Training loss : %f", loss.data.item())
                     
             train_loss = sum(train_losses)/train_size
             all_train_loss.append(train_loss)
@@ -163,12 +163,12 @@ class BertForTopicExtraction():
                     losses=[]
                     valid_size=0
                     for step, batch in enumerate(valid_dataloader):
-                        if step==0:
-                            batch = tuple(t.to(device) for t in batch) # multi-gpu does scattering it-self
-                            input_ids, segment_ids, input_mask, label_ids = batch
-                            loss = self.model(input_ids, input_mask, label_ids)
-                            losses.append(loss.data.item()*input_ids.size(0))
-                            valid_size+=input_ids.size(0)
+                        # if step==0:
+                        batch = tuple(t.to(device) for t in batch) # multi-gpu does scattering it-self
+                        input_ids, segment_ids, input_mask, label_ids = batch
+                        loss = self.model(input_ids, input_mask, label_ids)
+                        losses.append(loss.data.item()*input_ids.size(0))
+                        valid_size+=input_ids.size(0)
                     valid_loss=sum(losses)/valid_size
                     logger.info("validation loss: %f", valid_loss)
                     valid_losses.append(valid_loss)
