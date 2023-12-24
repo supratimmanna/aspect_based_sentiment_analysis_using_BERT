@@ -125,10 +125,13 @@ class BertForTopicExtraction():
         all_train_loss = []
         all_val_loss = []
         
-        for _ in tqdm(range(args['num_train_epochs'])):
+        
+        for iteration in tqdm(range(args['num_train_epochs'])):
             train_losses = []
             train_size = 0
             for step, batch in enumerate(train_dataloader):
+                
+                print('Epochs: {}, Step: {}'.format(iteration, step))
                 
                 # if step==0:
                 batch = tuple(t.to(device) for t in batch)
@@ -149,6 +152,7 @@ class BertForTopicExtraction():
                 
                 train_losses.append(loss.data.item()*input_ids.size(0) )
                 train_size+=input_ids.size(0)
+                
                 
                 logger.info("Training loss : %f", loss.data.item())
                     
