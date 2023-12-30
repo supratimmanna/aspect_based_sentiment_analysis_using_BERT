@@ -8,9 +8,19 @@ There are different types of data available for fine tuning and the data locatio
 
 For this fine tuning part we use the **_dataset/ae/laptop_** data. It contains several feedbacks for purchased laptops.
 
+> **The model**
+
+We use a pre-trained BERT model with an extra topic prediction layer on it. One can look into the **_topic_extraction.py_** file to get a detailed understanding of the model and its fine tuning process. 
+
 > **How to fine tune the BERT model**
 
 Run the **_run_topic_extraction.py_** file to fine tune the model.
+
+Things to keep in mind while fine tuning:
+```
+* We need a pre-trained BERT model.
+* aa
+```
 
 
 > **Required variables to run the fune tuning**
