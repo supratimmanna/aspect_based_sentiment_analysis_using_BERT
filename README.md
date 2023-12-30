@@ -14,7 +14,8 @@ We use a pre-trained BERT model with an extra topic prediction layer on it. One 
 
 > **How to fine tune the BERT model**
 
-Run the **_run_topic_extraction.py_** file to fine tune the model.
+* Get the pretrained model from [here](https://huggingface.co/bert-base-uncased/tree/main)
+* Run the **_run_topic_extraction.py_** file to fine tune the model.
 
 Things to keep in mind while fine tuning:
 ```
