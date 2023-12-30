@@ -18,7 +18,7 @@ Run the **_run_topic_extraction.py_** file to fine tune the model.
 
 Things to keep in mind while fine tuning:
 ```
-* We need a pre-trained BERT model. Look into this [link](https://huggingface.co/docs/transformers/training) [GitHub Pages](https://pages.github.com/) to find out more about how to fine tune a BERT model
+* We need a pre-trained BERT model. Look into this [GitHub Pages](https://pages.github.com/) to find out more about how to fine tune a BERT model
 * If one is having diffciulty to automatically download the model from huggingface while running the code then first download the model locally then give that downloaded path to the model.
 ```
 
