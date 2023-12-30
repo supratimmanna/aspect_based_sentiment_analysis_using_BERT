@@ -11,3 +11,8 @@ For this fine tuning part we use the **_dataset/ae/laptop_** data. It contains s
 > **How to fine tune the BERT model**
 
 Run the **_run_topic_extraction.py_** file to fine tune the model.
+
+
+> **Required variables to run the fune tuning**
+
+All the required varibales can be found **_config/config.yaml_** file. Change the value accordingly.
