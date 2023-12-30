@@ -24,4 +24,4 @@ Things to keep in mind while fine tuning:
 
 > **Required variables to run the fune tuning**
 
-All the required varibales can be found **_config/config.yaml_** file. Change the value accordingly.
+All the required varibales can be found **_config/config.yaml_** file. Change the value accordingly [link](https://huggingface.co/docs/transformers/training).
