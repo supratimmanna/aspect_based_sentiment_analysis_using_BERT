@@ -21,7 +21,7 @@ Things to keep in mind while fine tuning:
 * We need a pre-trained BERT model. 
 * If one is having diffciulty to automatically download the model from huggingface while running the code then first download the model locally then give that downloaded path to the model.
 ```
-Look into this Look into this [link]([https://www.anaconda.com/products/individual](https://huggingface.co/docs/transformers/training)) to find out more about how to fine tune a BERT model
+Look into this Look into this [link](https://huggingface.co/docs/transformers/training) to find out more about how to fine tune a BERT model
 
 > **Required variables to run the fune tuning**
 
